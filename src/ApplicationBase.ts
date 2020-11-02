@@ -1,5 +1,6 @@
 
 import { Canvas2DApplication } from "./core/Canvas2DApplication";
+import { Math2D } from "./core/math2D";
 import { TextAlign, TextBaseLine, TextHelper } from "./helper/TextHelper";
 
 export class ApplicationBase extends Canvas2DApplication {
@@ -38,6 +39,19 @@ export class ApplicationBase extends Canvas2DApplication {
         this.context2D.fillStyle = color;
         this.context2D.beginPath();
         this.context2D.arc( x, y, radius, 0, 2 * Math.PI );
+        this.context2D.fill();
+        this.context2D.restore();
+    }
+
+    public fillArc( x: number, y: number, degree: number, radius: number = 10, color: string = 'balck' ): void {
+        if ( this.context2D === null ) return;
+
+        this.context2D.save();
+        this.context2D.fillStyle = color;
+        this.context2D.beginPath();
+        this.context2D.moveTo( x, y );
+        this.context2D.arc( x, y, radius, - Math2D.toRadian( degree ) / 2, Math2D.toRadian( degree ) / 2, );
+        // this.context2D.lineTo(x, y)
         this.context2D.fill();
         this.context2D.restore();
     }
@@ -142,10 +156,10 @@ export class ApplicationBase extends Canvas2DApplication {
 
         this.context2D.save();
 
-        this.fillText( "第一象限", this.canvas.width, this.canvas.height, 'rgba(0, 0, 255, 0.5)', 'right', 'bottom', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
-        this.fillText( "第二象限", 0, this.canvas.height, 'rgba(0, 0, 255, 0.5)', 'left', 'bottom', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
-        this.fillText( "第三象限", 0, 0, 'rgba(0, 0, 255, 0.5)', 'left', 'top', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
-        this.fillText( "第四象限", this.canvas.width, 0, 'rgba(0, 0, 255, 0.5)', 'right', 'top', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
+        // this.fillText( "第一象限", this.canvas.width, this.canvas.height, 'rgba(0, 0, 255, 0.5)', 'right', 'bottom', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
+        // this.fillText( "第二象限", 0, this.canvas.height, 'rgba(0, 0, 255, 0.5)', 'left', 'bottom', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
+        // this.fillText( "第三象限", 0, 0, 'rgba(0, 0, 255, 0.5)', 'left', 'top', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
+        // this.fillText( "第四象限", this.canvas.width, 0, 'rgba(0, 0, 255, 0.5)', 'right', 'top', TextHelper.makeFontString( '24px', 'bolder', 'normal', 'normal', 'serif' ) );
 
         this.context2D.restore();
     }

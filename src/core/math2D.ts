@@ -55,6 +55,19 @@ export class Math2D {
         }
     }
 
+    /**
+     * 判断点是否与扇形发生碰撞
+     */
+    public static isPointInArc(pt: vec2, center: vec2, dir: vec2, radius:number, degree:nubmer ): boolean {
+        // | pt | ^ 2 > r ^ 2 
+        // const u = center.substract();
+        if( pt.squaredLength > radius * radius ) {
+            return false;
+        }
+        return false;
+        // pt dot 
+    }
+
     /** 
      * 判断点是否与圆发生碰撞 
     */
@@ -382,3 +395,4 @@ export class Rectangle {
         return false;
     }
 }
+
