@@ -58,14 +58,16 @@ export class Math2D {
     /**
      * 判断点是否与扇形发生碰撞
      */
-    public static isPointInArc(pt: vec2, center: vec2, dir: vec2, radius:number, degree:nubmer ): boolean {
+    public static isPointInArc( pt: vec2, center: vec2, dir: vec2, radius: number, degree: number ): boolean {
         // | pt | ^ 2 > r ^ 2 
-        // const u = center.substract();
-        if( pt.squaredLength > radius * radius ) {
+        const u = vec2.difference( pt, center );
+        if ( u.squaredLength > radius * radius ) {
             return false;
         }
-        return false;
-        // pt dot 
+
+        // u dot dir  > | u | * | dir | cos( theta / 2 )
+        return ( vec2.dotProduct( u, dir ) * vec2.dotProduct( u, dir ) ) / ( u.squaredLength * dir.squaredLength ) > ( Math.cos( degree ) + 1 ) / 2 );
+        // return vec2.dotProduct(u, dir) > u.length * Math.cos( degree );
     }
 
     /** 

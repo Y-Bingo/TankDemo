@@ -1,7 +1,6 @@
 import { ApplicationBase } from './ApplicationBase';
 import { Enemy } from "./component/Enemy";
 import { JoyStick } from './component/JoyStick';
-import { TankVc } from './component/TankVc';
 import { TankVc2 } from "./component/TankVc2";
 import { CanvasKeyBoardEvent, CanvasMouseEvent } from "./core/Event";
 import { Math2D } from "./core/math2D";
@@ -50,8 +49,9 @@ export class TankDemo extends ApplicationBase {
         this.draw4Quadrant();
         this.drawTank();
         this.drawJoyStick();
-        this.drawEnemy();
 
+        this.checkEnemy();
+        this.drawEnemy();
         const { x, y } = this._tank.pos;
         // const { x, y } = this._tank;
         // this.drawCoordInfo( `坐标：[ ${ ( this._mouseX - x ).toFixed( 0 ) },  ${ ( this._mouseY - y ).toFixed( 0 ) } ]`, this._mouseX, this._mouseY );
@@ -92,7 +92,7 @@ export class TankDemo extends ApplicationBase {
     }
 
     protected dispatchMouseUp( evt: CanvasMouseEvent ): void {
-        if( this.isOnJoyStickMove ) {
+        if ( this.isOnJoyStickMove ) {
             this.isOnJoyStickMove = false;
             this._joyStickMove.innerCenterPos.reset();
             this._tank.setSpeed( this._joyStickMove.innerCenterPos );
@@ -109,6 +109,13 @@ export class TankDemo extends ApplicationBase {
 
     protected dispatchKeyPress( evt: CanvasKeyBoardEvent ): void {
         this._tank.onKeyPress( evt );
+    }
+
+    public checkEnemy(): void {
+
+        for ( let i = 0; i < this.enemyPool.length; i++ ) {
+            this.enemyPool[ i ].isFound = Math2D.isPointInArc( this.enemyPool[ i ].pos, this._tank.pos, this._tank.turnPos, this._tank.scanRadius, this._tank.scanRotation );
+        }
     }
 
     public drawTank(): void {

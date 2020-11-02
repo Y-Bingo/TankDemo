@@ -11,6 +11,8 @@ export class TankVc2 {
     // 坦克当前位置
     public pos: vec2 = vec2.create( 100, 100 );
     public target: vec2 = vec2.create( 0, 0 );
+    public turnPos: vec2 = vec2.create( 0, 0 );
+    public scanPox: vec2 = vec2.create( 0, 0 );
 
     // x、y方向上的缩放系数
     public scaleX: number = 1.0;
@@ -135,12 +137,16 @@ export class TankVc2 {
 
     public turnTo( dir: vec2 ): void {
         this.tankRotation = Math.atan2( dir.y, dir.x );
+        vec2.copy(dir, this.turnPos );
+        // this.turnPos.normalize();
     }
 
-    public lookAt( dir: vec2): void {
+    public lookAt( dir: vec2 ): void {
         this.turretRotation = Math.atan2( dir.y, dir.x );
+        vec2.copy( dir, this.scanPox );
+        this.scanPox.normalize();
     }
-   
+
     public onKeyPress( evt: CanvasKeyBoardEvent ): void {
         if ( evt.key == "r" ) {
             this.turretRotation += this.turretRotateSpeed;
