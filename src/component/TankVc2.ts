@@ -12,7 +12,7 @@ export class TankVc2 {
     public pos: vec2 = vec2.create( 100, 100 );
     public target: vec2 = vec2.create( 0, 0 );
     public turnPos: vec2 = vec2.create( 0, 0 );
-    public scanPox: vec2 = vec2.create( 0, 0 );
+    public scanPos: vec2 = vec2.create( 0, 0 );
 
     // x、y方向上的缩放系数
     public scaleX: number = 1.0;
@@ -137,14 +137,14 @@ export class TankVc2 {
 
     public turnTo( dir: vec2 ): void {
         this.tankRotation = Math.atan2( dir.y, dir.x );
-        vec2.copy(dir, this.turnPos );
-        // this.turnPos.normalize();
+        vec2.copy( dir, this.turnPos );
+        this.turnPos.normalize();
     }
 
     public lookAt( dir: vec2 ): void {
         this.turretRotation = Math.atan2( dir.y, dir.x );
-        vec2.copy( dir, this.scanPox );
-        this.scanPox.normalize();
+        vec2.copy( dir, this.scanPos );
+        this.scanPos.normalize();
     }
 
     public onKeyPress( evt: CanvasKeyBoardEvent ): void {
@@ -175,16 +175,14 @@ export class TankVc2 {
         vec2.scaleAdd( this.pos, dir, curSpeed, this.pos );
     }
 
-    private _moveTowardToSpeed( intervalSec: number ): void {
+    private _moveTowardToBySpeed( intervalSec: number ): void {
         const dir: vec2 = vec2.scale( this.speed, intervalSec );
-        console.log( 'tankSpeed: ', this.speed.toString(), '偏移量', dir.toString() );
-        this.pos.add( dir );
+        vec2.sum( this.pos, dir, this.pos );
     }
 
     public update( intervalSec: number ): void {
-        // this._moveTowardTo( intervalSec );
         if ( this.speed.squaredLength !== 0 ) {
-            this._moveTowardToSpeed( intervalSec );
+            this._moveTowardToBySpeed( intervalSec );
             this.turnTo( this.speed );
         }
     }

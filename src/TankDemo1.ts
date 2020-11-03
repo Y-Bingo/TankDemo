@@ -2,13 +2,14 @@ import { ApplicationBase } from './ApplicationBase';
 import { JoyStick } from './component/JoyStick';
 import { TankVc } from './component/TankVc';
 import { CanvasKeyBoardEvent, CanvasMouseEvent } from "./core/Event";
-import { Math2D } from './core/math2D';
+import { Math2D, vec2 } from './core/math2D';
 
 export class TankDemo extends ApplicationBase {
 
     // public _tank: Tank;
     public _tank: TankVc;
     public _joyStick: JoyStick;
+    private _mousePox: vec2 = vec2.create( 0, 0 );
 
     public isOnJoyStick: boolean = false; // 是否在 joy 上
 
@@ -48,12 +49,9 @@ export class TankDemo extends ApplicationBase {
     }
 
     protected dispatchMouseDown( evt: CanvasMouseEvent ): void {
-        this._mouseX = evt.canvasPosition.x;
-        this._mouseY = evt.canvasPosition.y;
         if ( Math2D.isPointInCircle( this._joyStick.pos, evt.canvasPosition, this._joyStick.innerRadius ) ) {
+            vec2.copy( evt.canvasPosition, this._mousePox );
             this.isOnJoyStick = true;
-            console.log( '==================== 分割线 ====================' );
-            console.log( 'onJoyStick: ', this.isOnJoyStick );
         }
     }
 
@@ -62,7 +60,8 @@ export class TankDemo extends ApplicationBase {
         this._mouseY = evt.canvasPosition.y;
         // this._tank.onMouseMove( evt );
         if ( this.isOnJoyStick ) {
-            this._joyStick.onJoyStickMove( evt );
+            const dir = vec2.difference( evt.canvasPosition, this._mousePox );
+            this._joyStick.setDirection( dir );
             this._tank.setSpeed( this._joyStick.innerCenterPos );
             console.log( 'innerCenterPox: ', this._joyStick.innerCenterPos.toString() );
         }

@@ -3,18 +3,19 @@ import { Enemy } from "./component/Enemy";
 import { JoyStick } from './component/JoyStick';
 import { TankVc2 } from "./component/TankVc2";
 import { CanvasKeyBoardEvent, CanvasMouseEvent } from "./core/Event";
-import { Math2D } from "./core/math2D";
+import { Math2D, vec2 } from "./core/math2D";
 
 export class TankDemo extends ApplicationBase {
 
     // public _tank: Tank;
     public _tank: TankVc2;
-    public _joyStickMove: JoyStick;
-    public _joyStickGun: JoyStick;
+    public _joyStick: JoyStick;
+    // public _joyStickGun: JoyStick;
     private enemyPool: Enemy[] = []; // empty
 
+    private _mousePox: vec2 = vec2.create( 0, 0 );
+
     public isOnJoyStickMove: boolean = false; // 是否在 joy 上
-    public isOnJoyStickGun: boolean = false; // 是否在 joy 上
 
     constructor( canvas: HTMLCanvasElement, contextAttributes?: CanvasRenderingContext2DSettings ) {
         super( canvas, contextAttributes );
@@ -23,11 +24,11 @@ export class TankDemo extends ApplicationBase {
         this._tank.pos.reset( canvas.width * .5, canvas.height * .5 );
         this._tank.target.reset( canvas.width * .5, canvas.height * .5 );
 
-        this._joyStickMove = new JoyStick();
-        this._joyStickMove.pos.reset( this._joyStickMove.outerRadius + 50, canvas.height - this._joyStickMove.outerRadius - 50 );
+        this._joyStick = new JoyStick();
+        this._joyStick.pos.reset( this._joyStick.outerRadius + 50, canvas.height - this._joyStick.outerRadius - 50 );
 
-        this._joyStickGun = new JoyStick();
-        this._joyStickGun.pos.reset( canvas.width - this._joyStickMove.outerRadius - 50, canvas.height - this._joyStickMove.outerRadius - 50 );
+        // this._joyStickGun = new JoyStick();
+        // this._joyStickGun.pos.reset( canvas.width - this._joyStickMove.outerRadius - 50, canvas.height - this._joyStickMove.outerRadius - 50 );
 
         this.enemyPool.push( new Enemy( 300, 233 ) );
     }
@@ -59,51 +60,26 @@ export class TankDemo extends ApplicationBase {
     }
 
     protected dispatchMouseDown( evt: CanvasMouseEvent ): void {
-        this._mouseX = evt.canvasPosition.x;
-        this._mouseY = evt.canvasPosition.y;
-        if ( Math2D.isPointInCircle( this._joyStickMove.pos, evt.canvasPosition, this._joyStickMove.innerRadius ) ) {
+        if ( Math2D.isPointInCircle( this._joyStick.pos, evt.canvasPosition, this._joyStick.innerRadius ) ) {
+            vec2.copy( evt.canvasPosition, this._mousePox );
             this.isOnJoyStickMove = true;
-            console.log( '==================== 分割线 ====================' );
-            console.log( 'onJoyStickMove: ', this.isOnJoyStickMove );
-        }
-
-        if ( Math2D.isPointInCircle( this._joyStickGun.pos, evt.canvasPosition, this._joyStickGun.innerRadius ) ) {
-            this.isOnJoyStickGun = true;
-            console.log( '==================== 分割线 ====================' );
-            console.log( 'onJoyStickGun: ', this.isOnJoyStickMove );
         }
     }
 
     protected dispatchMouseMove( evt: CanvasMouseEvent ): void {
-        this._mouseX = evt.canvasPosition.x;
-        this._mouseY = evt.canvasPosition.y;
-        // this._tank.onMouseMove( evt );
         if ( this.isOnJoyStickMove ) {
-            this._joyStickMove.onJoyStickMove( evt );
-            this._tank.setSpeed( this._joyStickMove.innerCenterPos );
-            // console.log( 'innerCenterPox: ', this._joyStickMove.innerCenterPos.toString() );
-        }
-
-        if ( this.isOnJoyStickGun ) {
-            this._joyStickGun.onJoyStickMove( evt );
-            this._tank.lookAt( this._joyStickGun.innerCenterPos );
-            // console.log( 'innerCenterPox: ', this._joyStickMove.innerCenterPos.toString() );
+            const dir = vec2.difference( evt.canvasPosition, this._mousePox );
+            this._joyStick.setDirection( dir );
+            this._tank.setSpeed( this._joyStick.innerCenterPos );
         }
     }
 
     protected dispatchMouseUp( evt: CanvasMouseEvent ): void {
         if ( this.isOnJoyStickMove ) {
             this.isOnJoyStickMove = false;
-            this._joyStickMove.innerCenterPos.reset();
-            this._tank.setSpeed( this._joyStickMove.innerCenterPos );
+            this._joyStick.innerCenterPos.reset();
+            this._tank.setSpeed( this._joyStick.innerCenterPos );
             console.log( 'onJoyStickMove: ', this.isOnJoyStickMove );
-        }
-
-        if ( this.isOnJoyStickGun ) {
-            this.isOnJoyStickGun = false;
-            this._joyStickGun.innerCenterPos.reset();
-            // this._tank.setSpeed( this._joyStickGun.innerCenterPos );
-            console.log( 'onJoyStickGun: ', this.isOnJoyStickGun );
         }
     }
 
@@ -123,8 +99,7 @@ export class TankDemo extends ApplicationBase {
     }
 
     public drawJoyStick(): void {
-        this._joyStickMove.draw( this );
-        this._joyStickGun.draw( this );
+        this._joyStick.draw( this );
     }
 
     public drawEnemy(): void {

@@ -57,6 +57,8 @@ export class Math2D {
 
     /**
      * 判断点是否与扇形发生碰撞
+     * 返回true: pt点在扇形区域内
+     * 返回false: pt点在扇形区域外
      */
     public static isPointInArc( pt: vec2, center: vec2, dir: vec2, radius: number, degree: number ): boolean {
         // | pt | ^ 2 > r ^ 2 
@@ -66,8 +68,7 @@ export class Math2D {
         }
 
         // u dot dir  > | u | * | dir | cos( theta / 2 )
-        return ( vec2.dotProduct( u, dir ) * vec2.dotProduct( u, dir ) ) / ( u.squaredLength * dir.squaredLength ) > ( Math.cos( degree ) + 1 ) / 2 );
-        // return vec2.dotProduct(u, dir) > u.length * Math.cos( degree );
+        return vec2.dotProduct( u, dir ) > u.length * Math.sqrt( ( Math.cos( degree ) + 1 ) / 2 );
     }
 
     /** 

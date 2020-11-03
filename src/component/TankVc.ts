@@ -163,19 +163,18 @@ export class TankVc {
         const dir: vec2 = vec2.difference( this.target, this.pos );
         const curSpeed: number = this.linearSpeed * intervalSec;
         dir.normalize();
-        vec2.scaleAdd( this.pos, dir, curSpeed, this.pos );
+        vec2.scale( dir, curSpeed );
+        vec2.sum( this.pos, dir, this.pos );
     }
 
-    private _moveTowardToSpeed( intervalSec: number ): void {
+    private _moveTowardToBySpeed( intervalSec: number ): void {
         const dir: vec2 = vec2.scale( this.speed, intervalSec );
-        console.log( 'tankSpeed: ', this.speed.toString(), '偏移量', dir.toString() );
-        this.pos.add( dir );
+        vec2.sum( this.pos, dir, this.pos );
     }
 
     public update( intervalSec: number ): void {
-        // this._moveTowardTo( intervalSec );
         if ( this.speed.squaredLength !== 0 ) {
-            this._moveTowardToSpeed( intervalSec );
+            this._moveTowardToBySpeed( intervalSec );
             this._lookAtVc( this.speed );
         }
     }

@@ -1,33 +1,28 @@
 import { ApplicationBase } from './ApplicationBase';
 import { JoyStick } from './component/JoyStick';
+import { Tank } from "./component/Tank";
 import { TankVc } from './component/TankVc';
 import { CanvasKeyBoardEvent, CanvasMouseEvent } from "./core/Event";
 
 export class TankDemo extends ApplicationBase {
 
-    // public _tank: Tank;
-    public _tank: TankVc;
-    public _joyStick: JoyStick;
+    public _tank: Tank;
 
     constructor( canvas: HTMLCanvasElement, contextAttributes?: CanvasRenderingContext2DSettings ) {
         super( canvas, contextAttributes );
 
+        this._tank = new Tank();
+        this._tank.x = canvas.width * .5;
+        this._tank.y = canvas.height * .5;
+
         // this._tank = new Tank();
-        // this._tank.x = canvas.width * .5;
-        // this._tank.y = canvas.height * .5;
-
-        this._tank = new TankVc();
-        this._tank.pos.reset( canvas.width * .5, canvas.height * .5 );
-        this._tank.target.reset( canvas.width * .5, canvas.height * .5 );
-
-        this._joyStick = new JoyStick();
-        this._joyStick.pos.reset( this._joyStick.outerRadius + 50, canvas.height - this._joyStick.outerRadius - 50 );
+        // this._tank.pos.reset( canvas.width * .5, canvas.height * .5 );
+        // this._tank.target.reset( canvas.width * .5, canvas.height * .5 );
     }
 
     public update( elapsedMsec: number, intervalSec: number ): void {
         super.update( elapsedMsec, intervalSec );
 
-        // this._joyStick.update( intervalSec );
         this._tank.update( intervalSec );
     }
 
@@ -40,9 +35,8 @@ export class TankDemo extends ApplicationBase {
         this.drawCanvasCoordCenter();
         this.draw4Quadrant();
         this.drawTank();
-        this.drawJoyStick();
 
-        const { x, y } = this._tank.pos;
+        const { x, y } = this._tank;
         // const { x, y } = this._tank;
         // this.drawCoordInfo( `坐标：[ ${ ( this._mouseX - x ).toFixed( 0 ) },  ${ ( this._mouseY - y ).toFixed( 0 ) } ]`, this._mouseX, this._mouseY );
         // this.drawCoordInfo( `角度：${ Math2D.toDegree( Math2D.atan2( this._mouseX - x, this._mouseY - y ) ).toFixed( 0 ) }`, this._mouseX, this._mouseY + 30 );
@@ -51,9 +45,7 @@ export class TankDemo extends ApplicationBase {
     protected dispatchMouseMove( evt: CanvasMouseEvent ): void {
         this._mouseX = evt.canvasPosition.x;
         this._mouseY = evt.canvasPosition.y;
-        // this._tank.onMouseMove( evt );
-
-        this._joyStick.onJoyStickMove( evt );
+        this._tank.onMouseMove( evt );
     }
 
     protected dispatchMouseDown( evt: CanvasMouseEvent ): void {
@@ -68,10 +60,6 @@ export class TankDemo extends ApplicationBase {
 
     public drawTank(): void {
         this._tank.draw( this );
-    }
-
-    public drawJoyStick(): void {
-        this._joyStick.draw( this );
     }
 }
 
@@ -94,7 +82,6 @@ app.drawCanvasCoordCenter();
 app.draw4Quadrant();
 
 app.drawTank();
-app.drawJoyStick();
 // app._tank.tankRotation = Math.atan2( ptX - app.canvas.width * .5, ptY - app.canvas.height * .5 );
 // app.drawTank();
 

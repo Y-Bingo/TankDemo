@@ -61,25 +61,6 @@ export class JoyStick {
         app.context2D.restore();
     }
 
-    // private _lookAt(): void {
-    //     // 将鼠标点的x和y变换为相对坦克的坐标系的原点的标示值
-    //     let diffX: number = this._target.x - this.pos.x;
-    //     let diffY: number = this._target.y - this.pos.y;
-
-    //     // 计算弧度
-    //     let radian = Math.atan2( diffY, diffX );
-
-    //     this.tankRotation = radian;
-    // }
-
-    // public onMouseMove( evt: CanvasMouseEvent ): void {
-    //     // 每次移动， 记录当前鼠标指针在canvas2d画布中的位置
-    //     // this._targetX = evt.canvasPosition.x;
-    //     // this._targetY = evt.canvasPosition.y;
-    //     this._target.reset( evt.canvasPosition.x, evt.canvasPosition.y );
-    //     this._lookAt();
-    // }
-
     public onJoyStickMove( evt: CanvasMouseEvent ): void {
         vec2.difference( evt.canvasPosition, this.pos, this.innerCenterPos );
         // 限制可拖动范围
@@ -89,15 +70,12 @@ export class JoyStick {
         }
     }
 
-    // private _moveTowardTo( intervalSec: number ): void {
-    //     // 计算坦克当前的位置到鼠标点之间的向量
-    //     const dir: vec2 = vec2.difference( this._target, this.pos );
-    //     const curSpeed: number = this.linearSpeed * intervalSec;
-    //     dir.normalize();
-    //     this.pos = vec2.scaleAdd( this.pos, dir, curSpeed );
-    // }
-
-    // public update( intervalSec: number ): void {
-
-    // }
+    public setDirection( dir: vec2 ): void {
+        vec2.sum( this.outerCenterPos, dir, this.innerCenterPos );
+        // 限制可拖动范围
+        if ( this.innerCenterPos.squaredLength > this.outerRadius * this.outerRadius ) {
+            this.innerCenterPos.normalize();
+            vec2.scale( this.innerCenterPos, this.outerRadius, this.innerCenterPos );
+        }
+    }
 }
